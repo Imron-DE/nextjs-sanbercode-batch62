@@ -4,7 +4,7 @@ export default function users() {
   return (
     <>
       <Layout>
-        <p>Users</p>
+        <p>users</p>
       </Layout>
     </>
   );
