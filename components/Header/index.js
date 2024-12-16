@@ -21,6 +21,16 @@ const Header = () => {
               Users
             </Link>
           </li>
+          <li>
+            <Link href="/notes" className="text-white hover:text-gray-300">
+              notes
+            </Link>
+          </li>
+          <li>
+            <Link href="/posts" className="text-white hover:text-gray-300">
+              posts
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>
