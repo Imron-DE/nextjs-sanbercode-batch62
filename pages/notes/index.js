@@ -1,29 +1,68 @@
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { Box, Flex, Grid, GridItem, Card, CardBody, CardHeader, CardFooter, Heading, Text, Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Layout = dynamic(() => import("../Layout"), { ssr: false });
 
-export default function Notes({ notes }) {
+export default function Notes() {
+  const router = useRouter();
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    async function fetchingData() {
+      try {
+        const res = await fetch("https://service.pace-unv.cloud/api/notes");
+        const listnotes = await res.json();
+        setNotes(listnotes);
+      } catch (error) {
+        console.error("Failed to fetch notes:", error);
+      }
+    }
+    fetchingData();
+  }, []);
+  console.log(notes);
+
   return (
     <Layout metaTitle="Notes" metaDescription="Ini adalah halaman notes">
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Notes</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {notes.data.map((note) => (
-            <Link key={note.id} href={`/notes/${note.id}`} className="block bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow">
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">{note.title}</h2>
-              <p className="text-gray-600 line-clamp-3">{note.description}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
+      <Box padding="5">
+        <Flex justifyContent="end">
+          <Button colorScheme="blue" onClick={() => router.push("/notes/add")}>
+            Add Notes
+          </Button>
+        </Flex>
+        <Flex>
+          <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+            {notes?.data?.map((item) => (
+              <GridItem key={item.id}>
+                <Card>
+                  <CardHeader>
+                    <Heading>{item.title}</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <Text>{item.description}</Text>
+                  </CardBody>
+                  <CardFooter>
+                    <Button flex="1" variant="ghost" colorScheme="gray" bg="Gray.500" color="white">
+                      Edit
+                    </Button>
+                    <Button flex="1" variant="solid" colorScheme="red" bg="red.500" color="white">
+                      Delete
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </GridItem>
+            ))}
+          </Grid>
+        </Flex>
+      </Box>
     </Layout>
   );
 }
 
-export async function getStaticProps() {
-  const res = await fetch("https://service.pace-unv.cloud/api/notes");
-  const notes = await res.json();
+// export async function getStaticProps() {
+//   const res = await fetch("https://service.pace-unv.cloud/api/notes");
+//   const notes = await res.json();
 
-  return { props: { notes }, revalidate: 10 };
-}
+//   return { props: { notes }, revalidate: 10 };
+// }
