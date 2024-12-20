@@ -3,12 +3,15 @@ import { Box, Flex, Grid, GridItem, Card, CardBody, CardHeader, CardFooter, Head
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQueries } from "@/hooks/useQueries";
+import fetcher from "@/utils/fetcher";
+import useSWR from "swr";
 
 const Layout = dynamic(() => import("../Layout"), { ssr: false });
 
 export default function Notes() {
-  const { data, isLoading } = useQueries({ prefixUrl: "https://service.pace-unv.cloud/api/notes" });
-  console.log("data =>", data);
+  // const { data, isLoading } = useQueries({ prefixUrl: "https://service.pace-unv.cloud/api/notes" });
+  const { data, isLoading } = useSWR("https://service.pace-unv.cloud/api/notes", fetcher, { revalidateOnFocus: true });
+
   const router = useRouter();
   const [notes, setNotes] = useState([]);
 
