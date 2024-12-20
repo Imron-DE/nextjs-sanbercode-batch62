@@ -1,11 +1,14 @@
 import dynamic from "next/dynamic";
-import { Box, Flex, Grid, GridItem, Card, CardBody, CardHeader, CardFooter, Heading, Text, Button } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, Card, CardBody, CardHeader, CardFooter, Heading, Text, Button, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useQueries } from "@/hooks/useQueries";
 
 const Layout = dynamic(() => import("../Layout"), { ssr: false });
 
 export default function Notes() {
+  const { data, isLoading } = useQueries({ prefixUrl: "https://service.pace-unv.cloud/api/notes" });
+  console.log("data =>", data);
   const router = useRouter();
   const [notes, setNotes] = useState([]);
 
@@ -42,14 +45,18 @@ export default function Notes() {
   return (
     <Layout metaTitle="Notes" metaDescription="Ini adalah halaman notes">
       <Box padding="5">
-        <Flex justifyContent="end">
+        <Flex justifyContent="end" marginBottom="4">
           <Button colorScheme="blue" onClick={() => router.push("/notes/add")}>
             Add Notes
           </Button>
         </Flex>
-        <Flex>
+        {isLoading ? (
+          <Flex alignItems="center" justifyContent="center" height="200px">
+            <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+          </Flex>
+        ) : (
           <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-            {notes?.data?.map((item) => (
+            {data?.data?.map((item) => (
               <GridItem key={item.id}>
                 <Card>
                   <CardHeader>
@@ -70,7 +77,7 @@ export default function Notes() {
               </GridItem>
             ))}
           </Grid>
-        </Flex>
+        )}
       </Box>
     </Layout>
   );
