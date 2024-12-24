@@ -7,20 +7,24 @@ export const useMutation = () => {
     isError: false,
   });
 
-  const Mutate = useCallback(async ({ url = "", method = "POST", payload = {} } = {}) => {
+  const Mutate = useCallback(async ({ url = "", method = "POST", payload = {}, headers = {} } = {}) => {
     try {
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        ...(method !== "GET" && { body: JSON.stringify(payload) }),
       });
       const result = await response.json();
+
       setData((prevData) => ({
         ...prevData,
         data: result,
         isLoading: false,
       }));
-      return { ...result };
+      return result;
     } catch (error) {
       setData((prevData) => ({
         ...prevData,

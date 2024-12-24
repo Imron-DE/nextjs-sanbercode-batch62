@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const useQueries = ({ prefixUrl = "" } = {}) => {
+export const useQueries = ({ prefixUrl = "", headers = {} } = {}) => {
   const [data, setData] = useState({
     data: null,
     isLoading: false,
     isError: false,
   });
-  const fetchingData = useCallback(async ({ url = "", method = "GET" } = {}) => {
+
+  const fetchingData = useCallback(async ({ url = "", method = "GET", headers = {} } = {}) => {
     setData((prevData) => ({
       ...prevData,
       isLoading: true,
     }));
+
     try {
-      const response = await fetch(url, { method });
+      const response = await fetch(url, { method, headers }); // Perbaiki tanda kurung di sini
       const result = await response.json();
       setData((prevData) => ({
         ...prevData,
@@ -30,9 +32,9 @@ export const useQueries = ({ prefixUrl = "" } = {}) => {
 
   useEffect(() => {
     if (prefixUrl) {
-      fetchingData({ url: prefixUrl });
+      fetchingData({ url: prefixUrl, headers: headers });
     }
-  }, [prefixUrl, fetchingData]);
+  }, [prefixUrl, headers, fetchingData]);
 
   return { ...data };
 };
