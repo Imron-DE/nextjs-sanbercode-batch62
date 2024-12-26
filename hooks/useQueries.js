@@ -3,30 +3,25 @@ import { useCallback, useEffect, useState } from "react";
 export const useQueries = ({ prefixUrl = "", headers = {} } = {}) => {
   const [data, setData] = useState({
     data: null,
-    isLoading: false,
+    isLoading: true,
     isError: false,
   });
 
   const fetchingData = useCallback(async ({ url = "", method = "GET", headers = {} } = {}) => {
-    setData((prevData) => ({
-      ...prevData,
-      isLoading: true,
-    }));
-
     try {
-      const response = await fetch(url, { method, headers }); // Perbaiki tanda kurung di sini
+      const response = await fetch(url, { method, headers });
       const result = await response.json();
-      setData((prevData) => ({
-        ...prevData,
+      setData({
+        ...data,
         data: result,
         isLoading: false,
-      }));
+      });
     } catch (error) {
-      setData((prevData) => ({
-        ...prevData,
-        isLoading: false,
+      setData({
+        ...data,
         isError: true,
-      }));
+        isLoading: false,
+      });
     }
   }, []);
 
@@ -34,7 +29,7 @@ export const useQueries = ({ prefixUrl = "", headers = {} } = {}) => {
     if (prefixUrl) {
       fetchingData({ url: prefixUrl, headers: headers });
     }
-  }, [prefixUrl, headers, fetchingData]);
+  }, []);
 
   return { ...data };
 };

@@ -18,19 +18,18 @@ export const useMutation = () => {
         ...(method !== "GET" && { body: JSON.stringify(payload) }),
       });
       const result = await response.json();
-
-      setData((prevData) => ({
-        ...prevData,
+      setData({
+        ...data,
         data: result,
         isLoading: false,
-      }));
-      return result;
+      });
+      return { ...result };
     } catch (error) {
-      setData((prevData) => ({
-        ...prevData,
+      setData({
+        ...data,
         isError: true,
         isLoading: false,
-      }));
+      });
       return error;
     }
   }, []);

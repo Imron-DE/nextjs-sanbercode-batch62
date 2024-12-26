@@ -5,16 +5,13 @@ import { useQueries } from "@/hooks/useQueries";
 import { useMutation } from "@/hooks/useMutation";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import { UserContext } from "@/context/userContext";
 
 const Header = () => {
+  const userData = useContext(UserContext);
   const router = useRouter();
   const { Mutate } = useMutation();
-  const { data } = useQueries({
-    prefixUrl: "https://service.pace-unv.cloud/api/user/me",
-    headers: {
-      Authorization: `Bearer ${Cookies.get("user_token")}`,
-    },
-  });
 
   const HandleLogout = async () => {
     const response = await Mutate({
@@ -66,7 +63,7 @@ const Header = () => {
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className="bg-blue-500 text-white">
                 {/* Tampilkan nama pengguna jika ada */}
-                {data?.data?.name || "Loading..."}
+                {userData?.name || "Loading..."}
               </MenuButton>
               <MenuList>
                 <MenuItem onClick={HandleLogout}>Logout</MenuItem>
